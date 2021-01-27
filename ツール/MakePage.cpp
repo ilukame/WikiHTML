@@ -10,6 +10,10 @@
 #include <vector>
 #include <algorithm> // std::getline
 #include <windows.h>
+//#include <direct.h>
+//#include <sys/stat.h>
+//#include <cassert>
+#include <filesystem>
 
 /******* GLOBAL VARIABLES ***********/
 namespace gloval_values {
@@ -27,50 +31,17 @@ struct Item {
 };
 
 /******* FUNCTION PROTOTYPES ***********/
-// サブフォルダも検索しながらfileExの拡張子が付いたファイルを削除する
-bool DelFiles(const string &path, const vector<string> &fileEx) {
-	WIN32_FIND_DATA dirFile;
-	string searchPath = path + "\\*"; // all file and dir search
-	HANDLE hFind = FindFirstFile(searchPath.c_str(), &dirFile);
+int MainFunc();
 
-	// file and dir not find
-	if (hFind == INVALID_HANDLE_VALUE) {
+bool MyMkdir(const string &paths) {
+
+	//std::filesystem::create_directory("a");
+	// 暫定的にコメントアウト
+	/*if (_mkdir(path.c_str()) != 0) {
+		cout << "muri\n";
 		return false;
-	}
-	do {
-		string fileName = dirFile.cFileName;
-		// skip
-		if (fileName == "." || fileName == "..") {
-			continue;
-		}
-
-		string fullFileName = path + "\\" + fileName;
-		// dir
-		if (dirFile.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
-			if (DelFiles(fullFileName, fileEx) == false) {
-				return false;
-			}
-		}
-		// file
-		else {
-			for (int i = 0; i < fileEx.size(); i++) {
-				// 右から検索
-				int pos = fullFileName.rfind(fileEx[i]);
-				// 右端ではなかったら削除しない
-				if (pos != string::npos && fileEx[i].size() + pos == fullFileName.size()) {
-					// 削除
-					if (remove(fullFileName.c_str()) != 0) {
-						printf("error\n");
-						return false;
-					}
-					break;
-				}
-			}
-		}
-		// search next file
-	} while (FindNextFile(hFind, &dirFile));
-	// close
-	FindClose(hFind);
+	}*/		
+	
 	return true;
 }
 
@@ -85,21 +56,17 @@ int MainFunc() {
 		return -1;
 	}
 
-    string line;
+    string line, folder;
 	getline(ifs, line); // header
 	
     while (getline(ifs, line)) {
 		replace(line.begin(), line.end(), ',', ' ');
 		istringstream iss(line);
-		string s[3];
-		iss >> s[0] >> s[1] >> s[2];
-
-		// todo1
-		// stoiで変換https://cpprefjp.github.io/reference/string/stoi.html
-		
+		string n, sub_dir, main_dir, address;
+		iss >> n;
+		int num;
 		try {
-			int num = std::stoi(s[0]);
-			
+			num = std::stoi(n);
 		}
 		catch (const std::invalid_argument& e) {
 			return -1;
@@ -107,10 +74,27 @@ int MainFunc() {
 		catch (const std::out_of_range& e) {
 			return -1;
 		}
-		
+		if (num == 0) iss >> main_dir >> address;
+		else iss >> sub_dir >> address;
 
-		// todo2
-		// フォルダ作成するかを@聞く
+		// todo 1
+		// c++17のfilesystemに書き換える
+
+		// todo 2
+		// フォルダ作成する(かを聞く)(変なところに作るとまずいから)
+
+		// 0 is main dir
+		if (num == 0) {
+			folder = "../Pages/" + main_dir;
+			MyMkdir(folder);
+		}
+		// Non-Zero is sub dir
+		else {
+			folder += "/" + sub_dir;
+			if (MyMkdir(folder)) {
+				// 
+			}
+		}
 
     }
 
