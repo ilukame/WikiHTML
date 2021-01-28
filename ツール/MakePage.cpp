@@ -1,5 +1,6 @@
-// g++ -O3 -Wall -o a MakePage.cpp -static
+// g++ -O3 -Wall -o a MakePage.cpp -static -std=c++17
 // なんかMinGW5.3.0だとgetlineで死んで2h無駄にした
+// gcc 8.1.0だとfilesystemをincludeできません＾＾
 
 /*******INCLUDE HEADER***********/
 #include <iostream>
@@ -13,11 +14,12 @@
 //#include <direct.h>
 //#include <sys/stat.h>
 //#include <cassert>
-#include <filesystem>
+#include <filesystem> // C++17
 
 /******* GLOBAL VARIABLES ***********/
 namespace gloval_values {
 	const char* PAGE_LIST = "PageList.csv";
+	const char* TEMPLATE_FOLDER_PATH = "../Pages/テンプレート";
 }
 using namespace gloval_values;
 using namespace std;
@@ -33,18 +35,21 @@ struct Item {
 /******* FUNCTION PROTOTYPES ***********/
 int MainFunc();
 
-bool MyMkdir(const string &paths) {
-
-	//std::filesystem::create_directory("a");
-	// 暫定的にコメントアウト
-	/*if (_mkdir(path.c_str()) != 0) {
-		cout << "muri\n";
+bool MyMkdir(const string &folder_path) {
+	bool result = std::filesystem::create_directory(folder_path.c_str());
+	if (!result) {
 		return false;
-	}*/		
-	
+	}
 	return true;
 }
 
+// コピーしてリネームする
+void MyDirCopy(const string &to_folder_path, const string &folder_name) {
+	std::filesystem::copy(TEMPLATE_FOLDER_PATH, to_folder_path, std::filesystem::copy_options::recursive);
+	string s = to_folder_path + "/テンプレート";
+	string s2 = to_folder_path + folder_name;
+	std::filesystem::rename(s.c_str(), s2.c_str());
+}
 
 // Main
 // return -1 : error
@@ -56,7 +61,7 @@ int MainFunc() {
 		return -1;
 	}
 
-    string line, folder;
+    string line, folder_path;
 	getline(ifs, line); // header
 	
     while (getline(ifs, line)) {
@@ -77,38 +82,35 @@ int MainFunc() {
 		if (num == 0) iss >> main_dir >> address;
 		else iss >> sub_dir >> address;
 
-		// todo 1
-		// c++17のfilesystemに書き換える
-
-		// todo 2
-		// フォルダ作成する(かを聞く)(変なところに作るとまずいから)
-
+		
 		// 0 is main dir
 		if (num == 0) {
-			folder = "../Pages/" + main_dir;
-			MyMkdir(folder);
-		}
-		// Non-Zero is sub dir
-		else {
-			folder += "/" + sub_dir;
-			if (MyMkdir(folder)) {
-				// 
+			folder_path = "../Pages/" + main_dir;
+			bool isExists = std::filesystem::exists(folder_path.c_str());
+			if(!isExists) {
+				cout << main_dir << " フォルダを作成しますか?\n";
+				// todo 1
+				// フォルダ作成する(かを聞く)(変なところに作るとまずいから)
+
+
+				MyMkdir(folder_path);
 			}
 		}
+		// Non-Zero is sub dir
+		
+		else {
+			string sub_folder_path = folder_path + "/" + sub_dir;
+			bool isExists = std::filesystem::exists(sub_folder_path.c_str());
+			if(!isExists) {
+				cout << main_dir << " フォルダを作成しますか?\n";
+				// todo 2
+				// フォルダ作成する(かを聞く)(変なところに作るとまずいから)
 
+				// コピーしてリネームする
+				MyDirCopy(folder_path, sub_dir);
+			}
+		}
     }
-
-/*
-	Item item[50];
-	char dummy[300];
-	fscanf(fp, "%s", dummy);
-	int i = 0;
-	while (fscanf(fp, "%d,%s,%d", &item[i].level, item[i].page_name, &item[i].other) != EOF){
-		printf("%d %s %d\n",item[i].level, item[i].page_name, item[i].other);
-		i++;
-	}
-	*/
-
 	return 0;
 }
 
@@ -120,5 +122,4 @@ int main() {
 
 	return 0;
 }
-
 
