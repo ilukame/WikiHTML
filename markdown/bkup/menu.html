@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>TEST</title>
+        
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<link rel="stylesheet" href="outline.css">
+
+<script src="jquery-3.5.1.min.js"></script>
+<script src="menu.js"></script>
+
+
+<style>
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+        font-size: 14px;
+        line-height: 1.6;
+    }
+</style>
+<style>
+    .task-list-item { list-style-type: none; } .task-list-item-checkbox { margin-left: -20px; vertical-align: middle; }
+</style>
+
+</head>
+<body class="vscode-body vscode-light" bgcolor="silver" text-align="right">
+<ul>
+    <li>
+        <a href="#test" name ="aaa">TEST</a>
+    <ul>
+        <li>
+            <a href="#sub-test">Sub Test</a>
+        </li>
+    </ul>
+    </li>
+</ul>
+
+
+
+
+
+
+<details>
+    <summary>Tips</summary>
+    <ul id="test" >
+        <li data-char="change1"><a>change1</a></li>
+        <li data-char="change2">change2</li>
+    </ul>
+</details>
+
+<!--
+<script>
+    // 
+    function getEventTarget(e) {
+        e = e || window.event;
+        return e.target || e.srcElement; 
+    }
+
+    var ul = document.getElementById('test');
+    ul.onclick = function(event) {
+        var target = getEventTarget(event);
+        alert(target.innerHTML);
+    };
+</script>
+-->
+
+<!--
+<h1 id="test">TEST</h1>
+<h2 id="sub-test">Sub Test</h2>
+-->
+
+    </body>
+</html>
