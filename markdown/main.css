@@ -6,8 +6,8 @@ body{
 */
 
 .container {
-  width: 1000px; /*必要な幅に設定*/
-  margin: auto; /*ブラウザ中央に配置*/
+  width: 1905px; /*必要な幅に設定*/
+  margin: left; /*ブラウザ中央に配置*/
 }
 .container:after { /*clearfix設定*/
   content:"";
@@ -15,13 +15,15 @@ body{
   clear:both;
 }
 .left_wrap {
-  width: 300px; /*左カラム幅設定*/
+  width: 250px; /*左カラム幅設定*/
   float: left; /*左にフロート配置*/
 }
 .right_wrap {
-  width: 700px; /*右カラム幅設定*/
+  width: 1650px; /*右カラム幅設定*/
   float: right; /*右のフロート配置*/
+  border-left-style: solid;
 }
+
 
 summary {
   position: relative;
